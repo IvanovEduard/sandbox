@@ -66,12 +66,13 @@ public class DogTest {
 
     @Test
     public void test2() throws InterruptedException {
-        ExecutorService executorService = Executors.newFixedThreadPool(2);
+        ExecutorService executorService = Executors.newFixedThreadPool(Runtime.getRuntime().availableProcessors());
         Callable<String> task = () -> "thread1";
         Callable<String> task1 = () -> "thread2";
         Runnable task3 = () -> System.out.println("Vasya");
         List<Future<String>> futures = executorService.invokeAll(List.of(task, task1));
-        executorService.submit(task3);
+        Future<String> submit = executorService.submit(task);
+        Future<?> submit1 = executorService.submit(task3);
 
         futures.forEach(f -> {
             try {
@@ -114,7 +115,13 @@ public class DogTest {
         user3.setName("Oksana");
 
 
-        List<User> values = List.of(user, user1, user2, user3);
+        List<User> values = new ArrayList<>(List.of(user, user1, user2, user3));
+        values.sort(new Comparator<User>() {
+            @Override
+            public int compare(User o1, User o2) {
+                return o1.getName().compareTo(o2.getName());
+            }
+        });
 
         Map<Integer, List<User>> collect = values.stream().collect(Collectors.groupingBy(User::getAge));
         Map<Integer, String> collect2 = values.stream().collect(Collectors.groupingBy(User::getAge, Collectors.mapping(User::getName, Collectors.joining())));
