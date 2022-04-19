@@ -1,5 +1,6 @@
 package proxy;
 
+import java.lang.reflect.Method;
 import java.lang.reflect.Proxy;
 
 public class Main {
@@ -16,7 +17,10 @@ public class Main {
         Class[] interfaces = vasia.getClass().getInterfaces();
 
         //Создаем прокси нашего объекта vasia
-        Person proxyVasia = (Person) Proxy.newProxyInstance(vasiaClassLoader, interfaces, new PersonInvocationHandler(vasia));
+        Person proxyVasia = (Person) Proxy.newProxyInstance(vasiaClassLoader, interfaces, (Object proxy, Method method, Object[] args1) -> {
+                System.out.println("Привет!");
+                return method.invoke(vasia, args1);
+        });
 
         //Вызываем у прокси объекта один из методов нашего оригинального объекта
         proxyVasia.sayFrom(vasia.getCity(), vasia.getCountry());

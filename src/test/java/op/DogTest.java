@@ -3,16 +3,12 @@ package op;
 import org.apache.commons.lang.builder.EqualsBuilder;
 import org.apache.commons.lang.builder.HashCodeBuilder;
 import org.junit.jupiter.api.Test;
-import org.springframework.boot.test.autoconfigure.data.cassandra.DataCassandraTest;
 
-import java.security.spec.RSAOtherPrimeInfo;
 import java.util.*;
 import java.util.concurrent.*;
-import java.util.function.Function;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
-import java.util.stream.Stream;
 
 /**
  * Created by Eduard Ivanov on 6/29/21
@@ -98,6 +94,30 @@ public class DogTest {
         }
     }
 
+    @Test
+    public void test4() throws Exception {
+        Map<String, String> map = new HashMap<>();
+        map.put("A", "asd");
+        map.put("B", "asfg");
+        map.put("A", "aser");
+        System.out.println("A" == "A");
+        System.out.println(map.size());
+
+
+        int minNumThatNotIncluded = findMinNumThatNotIncluded(new int[]{9, 3, 6, 0, 1});
+        System.out.println(minNumThatNotIncluded);
+    }
+
+    private int findMinNumThatNotIncluded(int[] nums) {
+        Arrays.sort(nums);
+        for (int i = 0; i < nums.length; i++) {
+            if (i != nums[i]) {
+                return i;
+            }
+        }
+        return 0;
+    }
+
 
     @Test
     public void testStreamMap() throws InterruptedException {
@@ -132,6 +152,8 @@ public class DogTest {
         Map<String, IntSummaryStatistics> collect4 = values.stream().collect(Collectors.groupingBy(User::getName, Collectors.summarizingInt(User::getAge)));
         Map<String, Integer> collect5 = values.stream().collect(Collectors.groupingBy(User::getName, Collectors.summingInt(User::getAge)));
         System.out.println(collect);
+
+
 
     }
 
