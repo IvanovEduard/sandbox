@@ -35,8 +35,8 @@ public class ExtendsParentChildTest {
     }
 
     public static void main(String[] args) {
-        Parent parent = new Child();
-        Child child = new Child();
+        Parent parent = new Parent();
+        Parent child = new Child();
         FactoryTest factoryTest = new FactoryTest(parent);
         factoryTest.invokeMethod();
 
