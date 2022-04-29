@@ -69,7 +69,8 @@ public class DogTest {
         List<Future<String>> futures = executorService.invokeAll(List.of(task, task1));
         Future<String> submit = executorService.submit(task);
         Future<?> submit1 = executorService.submit(task3);
-
+        submit1.isCancelled();
+        submit1.isDone();
         futures.forEach(f -> {
             try {
                 System.out.println(f.get());

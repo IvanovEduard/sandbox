@@ -34,13 +34,25 @@ public class ExtendsParentChildTest {
         }
     }
 
+    private static class FactoryTest2<Child> {
+        private ExtendsParentChildTest.Child p;
+        public FactoryTest2(ExtendsParentChildTest.Child parent) {
+            this.p = parent;
+        }
+
+        void invokeMethod() {
+            p.callMethod(p);
+        }
+    }
+
     public static void main(String[] args) {
+        AbstractTest.A a = new AbstractTest.A();
         Parent parent = new Parent();
-        Parent child = new Child();
+        Child child = new Child();
         FactoryTest factoryTest = new FactoryTest(parent);
         factoryTest.invokeMethod();
 
-        FactoryTest factoryTest2 = new FactoryTest(child);
+        FactoryTest2<Child> factoryTest2 = new FactoryTest2<>(child);
         factoryTest2.invokeMethod();
     }
 }
