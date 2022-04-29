@@ -1,12 +1,12 @@
 package interviewtasks;
 
-public class TestTask {
+public class TestReverseStringTask {
 
     private TimeService timeService = new TimeService();
 
     public static void main(String[] args) {
         String[] strings = new String[10];
-        TestTask testTask = new TestTask();
+        TestReverseStringTask testTask = new TestReverseStringTask();
         System.out.println(testTask.getReverseString("cooltaskerff"));
 //        Scanner s = new Scanner(System.in);
 //        String word = s.nextLine();
