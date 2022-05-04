@@ -13,7 +13,7 @@ public class TaskZagnitkoFactorialTest {
                     .map(BigInteger::valueOf)
                     .reduce(BigInteger::multiply);
 
-        Optional<BigInteger> apply = result.apply(5);
+        Optional<BigInteger> apply = result.apply(100);
         System.out.println(apply.get());
     }
 }

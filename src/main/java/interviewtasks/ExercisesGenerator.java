@@ -1,9 +1,14 @@
 package interviewtasks;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Random;
-import java.util.Scanner;
+import lombok.SneakyThrows;
+
+import java.net.URLDecoder;
+import java.nio.charset.StandardCharsets;
+import java.util.*;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.Future;
+import java.util.stream.IntStream;
 import java.util.stream.Stream;
 
 /**
@@ -20,12 +25,29 @@ public class ExercisesGenerator {
     private static final String PLUS_OPERATOR = "+";
     private static final String MINUS_OPERATOR = "-";
 
+    @SneakyThrows
     public static void main(String... args) {
+        ExecutorService executorService = Executors.newFixedThreadPool(Runtime.getRuntime().availableProcessors());
+
+         Runnable threadBest = ExercisesGenerator::bestApproach;
+
+        long startTime = System.currentTimeMillis();
+        Future<?> submit = executorService.submit(threadBest);
+        long endTime = System.currentTimeMillis();
+
+        Object o = submit.get();
+        if (submit.isDone()) {
+            executorService.submit(threadBest);
+        }
+        executorService.shutdown();
+    }
+
+    private static void badApproach() {
         System.out.println("Start exercises!");
         List<String> setResults = new ArrayList<>();
         int result;
         int i = 0;
-        for (int j = 0; j < 10;) {
+        for (int j = 0; j < 10; ) {
 
             int numberOne = random.nextInt(100) + 1;
             int numberTwo = random.nextInt(100) + 1;
@@ -63,7 +85,42 @@ public class ExercisesGenerator {
         }
         char[] chars = "asd".toCharArray();
         String[] strings = Stream.of(chars).map(String::new).toArray(String[]::new);
-//        Arrays.sort(strings, Comparator.reverseOrder().);
+        Arrays.sort(strings, Comparator.reverseOrder());
+
+        System.out.println("All exercises is finished!");
+        System.out.println("Yor results:");
+        setResults.forEach(System.out::println);
+    }
+
+    private static void bestApproach() {
+        System.out.println("Start exercises!");
+        List<String> setResults = new ArrayList<>();
+        IntStream.rangeClosed(1, 3)
+                .forEach(index -> {
+                    Exercise exercise = generateExercise();
+                    int resultMain = PLUS_OPERATOR.equals(exercise.getOperator()) ? exercise.getFirstNum() + exercise.getSecondNum()
+                            : exercise.getFirstNum() - exercise.getSecondNum();
+                    System.out.println("Solve the exercise #" + index);
+
+                    String exerciseStr = buildExercise(exercise.getFirstNum(), exercise.getSecondNum(), exercise.getOperator(), index);
+                    System.out.println(exerciseStr);
+
+                    long startTime = System.currentTimeMillis();
+                    Scanner scanner = new Scanner(System.in);
+                    long answer = scanner.nextLong();
+                    long endTime = System.currentTimeMillis();
+
+                    if (endTime - startTime > 12000) {
+                        setResults.add(exerciseStr + " - Time exceeded No answer. The answer is - " + resultMain);
+                    } else if (answer == resultMain) {
+                        String replace = exerciseStr.replace("?", String.valueOf(answer));
+                        setResults.add(replace + " - Correct");
+                    } else {
+                        String replace = exerciseStr.replace("?", String.valueOf(answer));
+                        setResults.add(replace + " - Incorrect. Correc is - " + resultMain);
+                    }
+                });
+
         System.out.println("All exercises is finished!");
         System.out.println("Yor results:");
         setResults.forEach(System.out::println);
@@ -79,5 +136,40 @@ public class ExercisesGenerator {
 
     private static String buildExercise(final int numberOne, final int numberTwo, final String operator, final int exerciseNumber) {
         return "#" + exerciseNumber + " " + numberOne + " " + operator + " " + numberTwo + " = ?";
+    }
+
+    private static Exercise generateExercise() {
+        boolean isPlusOperation = isPlusOperation();
+        int numberOne = random.nextInt(100) + 1;
+        if (isPlusOperation) {
+            int numberTwo = numberOne == 100 ? 0 : random.nextInt(100 - numberOne) + 1;
+            return new Exercise(numberOne, numberTwo, PLUS_OPERATOR);
+        }
+        int numberTwo = random.nextInt(100) + 1;
+        return numberOne > numberTwo ? new Exercise(numberOne, numberTwo, MINUS_OPERATOR) : new Exercise(numberTwo, numberOne, MINUS_OPERATOR);
+    }
+
+    private static class Exercise {
+        private final int firstNum;
+        private final int secondNum;
+        private final String operator;
+
+        public Exercise(int firstNum, int secondNum, String operator) {
+            this.firstNum = firstNum;
+            this.secondNum = secondNum;
+            this.operator = operator;
+        }
+
+        public int getFirstNum() {
+            return firstNum;
+        }
+
+        public int getSecondNum() {
+            return secondNum;
+        }
+
+        public String getOperator() {
+            return operator;
+        }
     }
 }
